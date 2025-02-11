@@ -1,0 +1,13 @@
+{
+	"name": "PHP with Apache and MySQL",
+	"dockerComposeFile": [
+	  "docker-compose.yml"
+	],
+	"service": "php-apache",  // Le service PHP/Apache que nous allons définir dans le fichier docker-compose.yml
+	"workspaceFolder": "/workspace",  // Le répertoire de travail dans le conteneur
+	"forwardPorts": [80],  // Apache écoutera sur le port 80
+	"postCreateCommand": "composer install",  // Si vous avez besoin d'installer des dépendances Composer
+	"remoteUser": "www-data"  // Utilisation de www-data comme utilisateur pour les permissions Apache
+  }
+  
+  

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  php-apache:
+    image: mcr.microsoft.com/devcontainers/php:1-8.2-bullseye
+    container_name: php-apache
+    ports:
+      - "80:80"  # Apache expose le port 80
+    volumes:
+      - .:/workspace  # Le répertoire de travail
+    environment:
+      - APACHE_DOCUMENT_ROOT=/workspace/public  # Définissez le répertoire racine du serveur Apache
+    depends_on:
+      - mysql  # Apache dépend de MySQL
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password  # Mot de passe root pour MySQL
+      MYSQL_DATABASE: mydatabase  # Nom de la base de données par défaut
+    ports:
+      - "3306:3306"  # Expose le port MySQL
+
+volumes:
+  mysql-data:  # Volume pour persister les données MySQL

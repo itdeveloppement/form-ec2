@@ -1,0 +1,36 @@
+name: Déployer sur EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v2
+
+    - name: Configurer SSH
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_PUBLIC_DNS }} >> ~/.ssh/known_hosts
+
+    - name: Copier les fichiers sur EC2
+      run: |
+        scp -i ~/.ssh/id_rsa -r * ec2-user@${{ secrets.EC2_PUBLIC_DNS }}:/var/www/html/
+
+    - name: Exécuter Ansible Playbook
+      run: |
+        ansible-playbook -i inventory.ini deploy.yml
+
+
+    # Ajoutez les secrets suivants dans votre dépôt GitHub :
+    # SH_PRIVATE_KEY : La clé SSH privée utilisée pour se connecter à votre instance EC2.
+    # EC2_PUBLIC_DNS : L'adresse DNS publique de votre instance EC2.
